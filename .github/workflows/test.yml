@@ -17,6 +17,7 @@ jobs:
         with:
           country: us
       - name: Request through the proxy
-        run: curl -fsS --max-time 30 https://ipinfo.io/json | jq '{country, org}'
+        shell: bash # pipefail, so a failed curl fails the step instead of jq's exit 0 passing it
+        run: curl -fsS --max-time 30 --retry 2 --retry-all-errors https://ipinfo.io/json | jq '{country, org}'
         env:
           HTTPS_PROXY: ${{ steps.proxy.outputs.url }}
