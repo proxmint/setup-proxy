@@ -17,6 +17,6 @@ jobs:
         with:
           country: us
       - name: Request through the proxy
-        run: curl -fsS --max-time 30 https://ipinfo.io/json | jq '{ip, country, org}'
+        run: curl -fsS --max-time 30 https://ipinfo.io/json | jq '{country, org}'
         env:
           HTTPS_PROXY: ${{ steps.proxy.outputs.url }}
