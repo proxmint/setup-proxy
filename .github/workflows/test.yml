@@ -1,0 +1,22 @@
+name: test
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  proxy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - id: proxy
+        uses: ./
+        with:
+          country: us
+      - name: Request through the proxy
+        run: curl -fsS --max-time 30 https://ipinfo.io/json | jq '{ip, country, org}'
+        env:
+          HTTPS_PROXY: ${{ steps.proxy.outputs.url }}

@@ -1,0 +1,58 @@
+name: Proxmint proxy
+description: Proxies for test traffic in GitHub Actions. The job trades its OIDC token for Proxmint credentials, so no proxy password sits in secrets.
+author: Proxmint
+branding:
+  icon: globe
+  color: green
+
+inputs:
+  product:
+    description: "residential, premium-residential, datacenter or mobile. Default: the oldest product on the account."
+    required: false
+    default: ""
+  country:
+    description: "Two-letter exit country, such as us. Default: the targeting saved in the dashboard."
+    required: false
+    default: ""
+  session:
+    description: "rotating (a new IP on every request) or sticky (one IP for sticky-minutes)."
+    required: false
+    default: rotating
+  sticky-minutes:
+    description: "How long a sticky session keeps its IP, 1 to 120."
+    required: false
+    default: "30"
+  export-env:
+    description: "true sets HTTP_PROXY and HTTPS_PROXY for every later step of the job, checkouts and uploads included."
+    required: false
+    default: "false"
+
+outputs:
+  url:
+    description: "The proxy as http://user:pass@host:port. Masked in logs."
+    value: ${{ steps.proxy.outputs.url }}
+  host:
+    description: "Gateway host."
+    value: ${{ steps.proxy.outputs.host }}
+  port:
+    description: "Gateway port (HTTP and HTTPS)."
+    value: ${{ steps.proxy.outputs.port }}
+  username:
+    description: "Proxy username, with the targeting and session in it."
+    value: ${{ steps.proxy.outputs.username }}
+  password:
+    description: "Proxy password. Masked in logs."
+    value: ${{ steps.proxy.outputs.password }}
+
+runs:
+  using: composite
+  steps:
+    - id: proxy
+      shell: bash
+      env:
+        PRODUCT: ${{ inputs.product }}
+        COUNTRY: ${{ inputs.country }}
+        SESSION: ${{ inputs.session }}
+        STICKY: ${{ inputs.sticky-minutes }}
+        EXPORT: ${{ inputs.export-env }}
+      run: "$GITHUB_ACTION_PATH/setup.sh"
