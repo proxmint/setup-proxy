@@ -1,5 +1,5 @@
 name: Proxmint proxy
-description: Proxies for test traffic in GitHub Actions. The job trades its OIDC token for Proxmint credentials, so no proxy password sits in secrets.
+description: Proxies for test traffic in GitHub Actions, using the job's OIDC token instead of a proxy password in secrets.
 author: Proxmint
 branding:
   icon: globe
